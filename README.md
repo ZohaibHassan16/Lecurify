@@ -1,44 +1,49 @@
-# Lecturify: AI-Powered Notes Organizer & Refiner
+Lecturify: AI-Powered Notes Organizer
+Why I made this
+I’m tired of having a camera roll full of blurry, messy photos of my notebook/whiteboard that I can never find again. Lecturify is a tool I built to turn those handwritten lecture notes into actual structured study guides. It reads your handwriting, cleans up the mess, and gives you a readable PDF
 
-**Lecturify** is an AI tool designed for students to turn messy, handwritten lecture notes into perfectly structured, searchable study guides. You don't have to scroll through blurry photos of notebooks: Lecturify reads your handwriting, organizes it by topic, and gives you a professional PDF.
+What it does
+Reads Handwriting: Uses PaddleOCR to scan your photos and turn the scribbles into text.
 
-## Key Features
-* **Handwriting Recognition**: Uses **PaddleOCR** to extract text from your uploaded images.
-* **AI Brain**: Powered by **Microsoft Phi-3-mini**, which acts as a "Strict University Professor" to re-organize chaotic notes.
-* **Smart Grouping**: Automatically merges related facts from different pages into logical headers.
-* **Export to PDF**: Instantly turn your digitized notes into a clean PDF study guide.
+AI Cleanup: I used the Microsoft Phi-3 model and gave it instructions to act like a "Strict Professor." It takes the raw, messy text and re-organizes it into logical topics and bullet points.
 
-## How it Works
-1.  **OCR Phase**: The system enhances your images (contrast/sharpness) and extracts every line of text.
-2.  **LLM Phase**: The raw text is sent to the Phi-3 model with instructions to fix continuity and format everything into Markdown.
-3.  **Web Dashboard**: A simple FastAPI-based interface allows you to upload photos and preview results in real-time.
+Auto-Merging: If you upload multiple pages, it tries to connect the facts so the notes actually make sense.
 
-## Getting Started
+PDF Export: Once you're happy with the notes, you can just hit export and get a clean PDF.
 
-### Option 1: Google Colab (Easiest)
-1.  Open the `Lecturify.ipynb` file in this repository.
-2.  Upload it to [Google Colab](https://colab.research.google.com/).
-3.  Run the cells in order. Use the **ngrok** link generated at the end to open your dashboard!
+The Tech Stuff
+OCR: PaddleOCR (for the text extraction).
 
-### Option 2: Local Setup (For Developers)
-1.  **Clone the repo**:
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/Lecturify.git](https://github.com/YOUR_USERNAME/Lecturify.git)
-    cd Lecturify
-    ```
-2.  **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  **Run the app**:
-    ```bash
-    uvicorn main:app --reload
-    ```
-4.  Open `http://127.0.0.1:8000` in your browser.
+LLM: Microsoft Phi-3-mini (the "brain" that fixes the formatting).
 
-## Project Structure
-* `Lecturify.ipynb`: The original development notebook.
-* `logic.py`: The "Engine" containing the OCR and AI logic.
-* `main.py`: The FastAPI server handling the web requests.
-* `templates/`: Contains the `index.html` file for the user interface.
+Backend: FastAPI to handle the image uploads and logic.
 
+Frontend: A basic HTML/JS dashboard so you don't have to run everything through code cells.
+
+How to use it
+The Colab way (Easiest)
+Upload Lecturify.ipynb to Google Colab.
+
+Run the cells in order.
+
+At the very end, it will give you an ngrok link. Click that to open the dashboard and start uploading your photos!
+
+Running it locally
+If you want to run it on your own machine:
+
+Clone this repo.
+
+Install the stuff in requirements.txt.
+
+Run uvicorn main:app --reload in your terminal.
+
+Go to http://127.0.0.1:8000.
+
+Files in this repo
+Lecturify.ipynb: The main notebook I used for development.
+
+logic.py: The "engine" that handles the OCR and the AI prompts.
+
+main.py: The server code.
+
+templates/: The HTML/CSS files for the dashboard.
