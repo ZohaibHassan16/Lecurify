@@ -1,8 +1,8 @@
 Lecturify: AI-Powered Notes Organizer
-Why I made this
+**Why I made this**
 I’m tired of having a camera roll full of blurry, messy photos of my notebook/whiteboard that I can never find again. Lecturify is a tool I built to turn those handwritten lecture notes into actual structured study guides. It reads your handwriting, cleans up the mess, and gives you a readable PDF
 
-What it does
+**What it does**
 Reads Handwriting: Uses PaddleOCR to scan your photos and turn the scribbles into text.
 
 AI Cleanup: I used the Microsoft Phi-3 model and gave it instructions to act like a "Strict Professor." It takes the raw, messy text and re-organizes it into logical topics and bullet points.
