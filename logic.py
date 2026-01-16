@@ -9,23 +9,18 @@ import sys
 import subprocess
 import gc
 
-# Memory Cleanup
-if 'digitizer' in locals(): del digitizer
-gc.collect()
-torch.cuda.empty_cache()
-
-warnings.filterwarnings("ignore")
-
-# CUDA Check
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"🚀 Using device: {device}")
 
 class NotesDigitizer:
     def __init__(self):
-        print("⏳ Loading OCR...")
+        # Memory cleanup
+        gc.collect()
+        torch.cuda.empty_cache()
+        warnings.filterwarnings("ignore")
+
+        print("Loading OCR...")
         self.ocr_engine = PaddleOCR(use_angle_cls=True, lang='en', show_log=False)
 
-        print("⏳ Loading LLM ...")
+        print("Loading LLM ...")
         model_id = "microsoft/Phi-3-mini-4k-instruct"
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
 
@@ -45,7 +40,7 @@ class NotesDigitizer:
             do_sample=True,
             temperature=0.1
         )
-        print("✅ Systems Online.")
+        print("Systems Online.")
 
     def preprocess_image(self, image_bytes):
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -59,7 +54,7 @@ class NotesDigitizer:
         """Process multiple images, extract text with OCR, and structure with LLM."""
         clean_pages = []
         total_pages = len(image_files_bytes)
-        print(f"📚 Processing {total_pages} pages individually...")
+        print(f"Processing {total_pages} pages individually...")
 
         # OCR Phase
         for idx, img_bytes in enumerate(image_files_bytes):
@@ -77,17 +72,17 @@ class NotesDigitizer:
                 # Format this page's text
                 raw_text = "\n".join(page_text_lines)
                 clean_pages.append(f"--- PAGE {idx+1} ---\n{raw_text}")
-                print(f"   ✓ Page {idx+1} processed successfully")
+                print(f"   Page {idx+1} processed successfully")
 
             except Exception as e:
-                print(f"   ✗ Error on Page {idx+1}: {str(e)[:100]}...")
+                print(f"   Error on Page {idx+1}: {str(e)[:100]}...")
                 clean_pages.append(f"--- PAGE {idx+1} (FAILED) ---\n[OCR Error: {str(e)[:50]}...]")
 
-        # Combine all pages for LLM processing
+        # combining all pages for processing in lllm
         full_context = "\n\n".join(clean_pages)
 
         # LLM Phase
-        print("🧠 Structuring notes with LLM...")
+        print("Structuring notes with LLM...")
 
         prompt = f"""<|user|>
 You are a strict University Professor. You have been given a student's unordered, chaotic lecture notes.
@@ -116,23 +111,12 @@ Output the final study guide now.
 
             final_notes = output[0]['generated_text']
 
-
             if "<|assistant|>" in final_notes:
                 final_notes = final_notes.split("<|assistant|>")[1].strip()
 
-            print("✅ Notes structured successfully!")
+            print("Notes structured successfully!")
             return final_notes
 
         except Exception as e:
-            print(f"⚠️ LLM error: {e}")
-            # Fallback
-            return f"""# Recovery Mode - Raw OCR Text
-
-The LLM failed to structure the notes. Here is the raw extracted text:
-
-{full_context}
-
-*Note: This is unprocessed OCR output. It may contain errors and lacks structure.*"""
-
-# Instantiating
-digitizer = NotesDigitizer()
+            print(f"LLM error: {e}")
+            return f"# Recovery Mode\n\n{full_context}"
